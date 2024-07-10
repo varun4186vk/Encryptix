@@ -1,0 +1,56 @@
+import tkinter as tk
+from tkinter import messagebox
+import random
+
+class RockPaperScissors:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Rock Paper Scissors")
+        self.root.geometry("700x300")
+        
+        self.label_title = tk.Label(self.root, text="Rock Paper Scissors", font=('Helvetica', 18, 'bold'))
+        self.label_title.pack(pady=20)
+        
+        self.label_choose = tk.Label(self.root, text="Choose Rock, Paper, or Scissors:", font=('Arial', 14))
+        self.label_choose.pack(pady=10)
+        
+        self.frame_buttons = tk.Frame(self.root)
+        self.frame_buttons.pack(pady=10)
+        
+        self.rock_button = tk.Button(self.frame_buttons, text="Rock", width=10, font=('Arial', 12), command=lambda: self.play("Rock"))
+        self.rock_button.pack(side=tk.LEFT, padx=10)
+        
+        self.paper_button = tk.Button(self.frame_buttons, text="Paper", width=10, font=('Arial', 12), command=lambda: self.play("Paper"))
+        self.paper_button.pack(side=tk.LEFT, padx=10)
+        
+        self.scissors_button = tk.Button(self.frame_buttons, text="Scissors", width=10, font=('Arial', 12), command=lambda: self.play("Scissors"))
+        self.scissors_button.pack(side=tk.LEFT, padx=10)
+        
+        self.result_label = tk.Label(self.root, text="", font=('Arial', 16, 'bold'))
+        self.result_label.pack(pady=20)
+        
+    def play(self, user_choice):
+        options = ["Rock", "Paper", "Scissors"]
+        computer_choice = random.choice(options)
+
+        result = self.determine_winner(user_choice, computer_choice)
+
+        self.result_label.config(text=f"You chose {user_choice}. Computer chose {computer_choice}. {result}")
+        
+        # Display message box with detailed result
+        messagebox.showinfo("Result", f"You chose {user_choice}.\nComputer chose {computer_choice}.\n\n{result}")
+
+    def determine_winner(self, user, computer):
+        if user == computer:
+            return "It's a tie!"
+        elif (user == "Rock" and computer == "Scissors") or \
+             (user == "Paper" and computer == "Rock") or \
+             (user == "Scissors" and computer == "Paper"):
+            return "You win!"
+        else:
+            return "Computer wins!"
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = RockPaperScissors(root)
+    root.mainloop()
