@@ -1,0 +1,96 @@
+import tkinter as tk
+from tkinter import messagebox
+from tkinter import simpledialog
+
+class ContactBookApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Contact Book Application")
+        
+        self.contacts = {}
+        
+        self.frame = tk.Frame(self.root)
+        self.frame.pack(pady=10)
+        
+        self.contact_listbox = tk.Listbox(
+            self.frame, height=10, width=50, bd=0, font=("Helvetica", 12)
+        )
+        self.contact_listbox.pack(side=tk.LEFT, fill=tk.BOTH)
+        
+        self.scrollbar = tk.Scrollbar(self.frame)
+        self.scrollbar.pack(side=tk.RIGHT, fill=tk.BOTH)
+        
+        self.contact_listbox.config(yscrollcommand=self.scrollbar.set)
+        self.scrollbar.config(command=self.contact_listbox.yview)
+        
+        self.entry = tk.Entry(
+            self.root, font=("Helvetica", 12)
+        )
+        self.entry.pack(pady=10)
+        
+        self.add_button = tk.Button(
+            self.root, text="Add Contact", font=("Helvetica", 12), command=self.add_contact
+        )
+        self.add_button.pack(pady=5)
+        
+        self.view_button = tk.Button(
+            self.root, text="View Contact", font=("Helvetica", 12), command=self.view_contact
+        )
+        self.view_button.pack(pady=5)
+        
+        self.edit_button = tk.Button(
+            self.root, text="Edit Contact", font=("Helvetica", 12), command=self.edit_contact
+        )
+        self.edit_button.pack(pady=5)
+        
+        self.remove_button = tk.Button(
+            self.root, text="Remove Contact", font=("Helvetica", 12), command=self.remove_contact
+        )
+        self.remove_button.pack(pady=5)
+    
+    def add_contact(self):
+        name = self.entry.get()
+        if name != "" and name not in self.contacts:
+            phone = simpledialog.askstring("Input", f"Enter phone number for {name}:")
+            if phone:
+                self.contacts[name] = phone
+                self.update_contact_listbox()
+                self.entry.delete(0, tk.END)
+        else:
+            messagebox.showwarning("Warning", "You must enter a unique contact name.")
+    
+    def view_contact(self):
+        try:
+            selected_contact = self.contact_listbox.get(self.contact_listbox.curselection())
+            phone = self.contacts[selected_contact]
+            messagebox.showinfo("Contact Details", f"Name: {selected_contact}\nPhone: {phone}")
+        except IndexError:
+            messagebox.showwarning("Warning", "You must select a contact.")
+    
+    def edit_contact(self):
+        try:
+            selected_contact = self.contact_listbox.get(self.contact_listbox.curselection())
+            new_phone = simpledialog.askstring("Input", f"Enter new phone number for {selected_contact}:")
+            if new_phone:
+                self.contacts[selected_contact] = new_phone
+                self.update_contact_listbox()
+        except IndexError:
+            messagebox.showwarning("Warning", "You must select a contact.")
+    
+    def remove_contact(self):
+        try:
+            selected_contact = self.contact_listbox.get(self.contact_listbox.curselection())
+            del self.contacts[selected_contact]
+            self.update_contact_listbox()
+        except IndexError:
+            messagebox.showwarning("Warning", "You must select a contact.")
+    
+    def update_contact_listbox(self):
+        self.contact_listbox.delete(0, tk.END)
+        for name in self.contacts:
+            self.contact_listbox.insert(tk.END, name)
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = ContactBookApp(root)
+    root.mainloop()
